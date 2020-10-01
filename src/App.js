@@ -16,7 +16,7 @@ export const Todo = ({ todo, index, completeTodo, removeTodo }) => {
     );
 }
 
-const TodoForm = ({ addTodo }) => {
+export const TodoForm = ({ addTodo }) => {
     const [value, setValue] = useState('');
 
     const handleSubmit = event => {
