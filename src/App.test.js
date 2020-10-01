@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { shallow, configure } from 'enzyme';
+import { shallow, mount, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import App, { Todo, TodoForm, useTodos } from './App';
 
@@ -104,6 +104,24 @@ describe('App', () => {
                 { text: 'Todo 3', isCompleted: false }
             ]);
             expect(props.todos).toHaveLength(2);
+        });
+
+        test('App', () => {
+            const wrapper = mount(<App />);
+            const prevent = jest.fn();
+
+            wrapper.find('input').simulate('change', { target: { value: 'My todo!' } });
+            wrapper.find('form').simulate('submit', { preventDefault: prevent });
+            // Here the addTodo function is executed.
+
+            const found = wrapper.find('.todo').at(0).text().includes('My todo!');
+
+            expect(found).toEqual(true);
+            expect(prevent.mock.calls).toEqual([[]]);
+            // Or
+            expect(prevent).toHaveBeenCalled();
+            // Or
+            expect(prevent).toHaveBeenCalledTimes(1);
         });
     });
 });
