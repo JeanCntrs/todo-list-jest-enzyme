@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { shallow, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import App, { Todo, TodoForm } from './App';
+import App, { Todo, TodoForm, useTodos } from './App';
 
 configure({ adapter: new Adapter() });
 
@@ -56,5 +56,54 @@ describe('App', () => {
             expect(prevent.mock.calls).toEqual([[]]); // Called once without arguments.
         })
 
+    });
+
+    describe('Custom hook: useTodos', () => {
+        test('should add a new item to todo list when running addTodo', () => {
+            // Hooks can only be executed within a component.
+            const Test = (props) => {
+                const hook = props.hook();
+                return <div {...hook}></div>;
+            }
+            const wrapper = shallow(<Test hook={useTodos} />);
+            let props = wrapper.find('div').props();
+
+            props.addTodo('Test text');
+            props = wrapper.find('div').props();
+
+            expect(props.todos[0]).toEqual({ text: 'Test text' });
+        });
+
+        test('should mark the first item in the list as completed when running completeTodo', () => {
+            const Test = (props) => {
+                const hook = props.hook();
+                return <div {...hook}></div>;
+            }
+            const wrapper = shallow(<Test hook={useTodos} />);
+            let props = wrapper.find('div').props();
+
+            props.completeTodo(0);
+            props = wrapper.find('div').props();
+
+            expect(props.todos[0]).toEqual({ text: 'Todo 1', isCompleted: true });
+        });
+
+        test('should remove the first item from the todo list when running removeTodo', () => {
+            const Test = (props) => {
+                const hook = props.hook();
+                return <div {...hook}></div>;
+            }
+            const wrapper = shallow(<Test hook={useTodos} />);
+            let props = wrapper.find('div').props();
+
+            props.removeTodo(0);
+            props = wrapper.find('div').props();
+
+            expect(props.todos).toEqual([
+                { text: 'Todo 2', isCompleted: false },
+                { text: 'Todo 3', isCompleted: false }
+            ]);
+            expect(props.todos).toHaveLength(2);
+        });
     });
 });

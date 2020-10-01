@@ -38,7 +38,8 @@ export const TodoForm = ({ addTodo }) => {
     );
 }
 
-const App = () => {
+// Custom hook
+export const useTodos = () => {
     const [todos, setTodos] = useState([
         { text: 'Todo 1', isCompleted: false },
         { text: 'Todo 2', isCompleted: false },
@@ -61,6 +62,12 @@ const App = () => {
         newTodos.splice(index, 1);
         setTodos(newTodos);
     };
+
+    return { todos, addTodo, completeTodo, removeTodo };
+}
+
+const App = () => {
+    const { todos, addTodo, completeTodo, removeTodo } = useTodos();
 
     return (
         <div className="app">
